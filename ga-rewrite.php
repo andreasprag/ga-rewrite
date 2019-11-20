@@ -10,28 +10,22 @@
  */
 function ga_rewrite() {
 	
-    if (!isset($_COOKIE['ga_rewrite'])) {
+    if (!isset($_COOKIE['ga_rewrite']) && !isset($_GET["_ga"])) {	
 		$domain = $_SERVER['HTTP_HOST'];
-        if (isset($_COOKIE['_ga'])) {
-            $ga = $_COOKIE['_ga'];
-        }
-		else{
+
+		if (!isset($_COOKIE['_ga'])) {
 			$random = str_pad(mt_rand(1,9999999),7,'0',STR_PAD_LEFT);
 			$timestamp = time();
 			$ga = "GA1.2." . $random . "." . $timestamp;
-			
 		}
-        if (isset($_GET["_ga"])) {
-            $ga_param = $_GET["_ga"];
-            if ($ga_param == $ga) {
-                setcookie('_ga', $ga, time() + 63113904, '/', '.'.$domain);
-                setcookie('ga_rewrite', $ga, time() + 604800, '/', '.'.$domain);
-            }
-        } else {
-            setcookie('_ga', $ga, time() + 63113904, '/', '.'.$domain);
-            setcookie('ga_rewrite', $ga, time() + 604800, '/', '.'.$domain);
-        } 
+		
+		elseif (isset($_COOKIE['_ga'])) {
+            $ga = $_COOKIE['_ga'];
+        }
+		
+		setcookie('_ga', $ga, time() + 63113904, '/', '.'.$domain);
+		setcookie('ga_rewrite', $ga, time() + 604800, '/', '.'.$domain);	
+    } 
     }
-}
+	
 add_action('init', 'ga_rewrite');
-
